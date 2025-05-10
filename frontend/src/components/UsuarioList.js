@@ -18,16 +18,29 @@ function UsuarioList() {
   }, []);
 
   return (
-    <div>
-      <h2>Lista de Usuários</h2>
-      <ul>
-        {usuarios.map((usuario) => (
-          <li key={usuario.id}>
-            {usuario.nome} - {usuario.email} - {usuario.telefone}
-          </li>
-        ))}
-      </ul>
-    </div>
+<div>
+  <h2>Lista de Usuários</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Telefone</th>
+        <th>Data de Cadastro</th>
+      </tr>
+    </thead>
+    <tbody>
+      {usuarios.map((usuario) => (
+        <tr key={usuario.id}>
+          <td>{usuario.nome}  </td>
+          <td>{usuario.email} </td>
+          <td>{usuario.telefone}  </td>
+          <td>{usuario.data_cadastro}  </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
   );
 }
 
