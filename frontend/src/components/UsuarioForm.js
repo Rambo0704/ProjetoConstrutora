@@ -1,27 +1,32 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import api from "../api";
-
 
 function UsuarioForm() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    api
-      .post("usuarios/", { nome, email, telefone })
-      .then(() => {
-        alert("Usuário cadastrado com sucesso!");
-        setNome("");
-        setEmail("");
-        setTelefone("");
-      })
-      .catch((error) => {
-        console.error("Erro ao cadastrar usuário:", error);
+    try {
+
+      const response = await api.post("/api/usuarios/", {
+        nome,
+        email,
+        telefone,
       });
+
+      alert("Usuário cadastrado com sucesso!");
+
+      setNome("");
+      setEmail("");
+      setTelefone("");
+    } catch (error) {
+      console.error("Erro ao cadastrar usuário:", error);
+      console.log("Detalhes do erro:", error.response ? error.response.data : "Erro sem resposta");
+      alert("Erro ao cadastrar usuário. Verifique o console para mais detalhes.");
+    }
   };
 
   return (
@@ -30,28 +35,28 @@ function UsuarioForm() {
       <form onSubmit={handleSubmit}>
         <div>
           <label>Nome:</label>
-          <input 
-            type="text" 
-            value={nome} 
-            onChange={(e) => setNome(e.target.value)} 
-            required 
+          <input
+            type="text"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            required
           />
         </div>
         <div>
           <label>Email:</label>
-          <input 
-            type="email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            required 
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
           />
         </div>
         <div>
           <label>Telefone:</label>
-          <input 
-            type="text" 
-            value={telefone} 
-            onChange={(e) => setTelefone(e.target.value)} 
+          <input
+            type="text"
+            value={telefone}
+            onChange={(e) => setTelefone(e.target.value)}
           />
         </div>
         <button type="submit">Cadastrar</button>
@@ -61,5 +66,3 @@ function UsuarioForm() {
 }
 
 export default UsuarioForm;
-// O código acima é um componente React que implementa um formulário para cadastrar usuários.
-// Ele utiliza o hook useState para gerenciar os estados dos campos do formulário (nome, email e telefone).

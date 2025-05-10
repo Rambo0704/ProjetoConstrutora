@@ -8,7 +8,7 @@ function UsuarioList() {
 
   useEffect(() => {
     api
-      .get("usuarios/")
+      .get("api/usuarios/")
       .then((response) => {
         setUsuarios(response.data);
       })
