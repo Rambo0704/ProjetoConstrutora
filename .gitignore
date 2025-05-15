@@ -1,0 +1,16 @@
+# .gitignore
+
+# Ignore o ambiente virtual
+venv/
+.env
+
+# Ignore arquivos do Django
+*.pyc
+__pycache__/
+db.sqlite3
+
+# Ignore configurações do sistema operacional
+.DS_Store
+
+# Ignore arquivos do Node.js (frontend)
+node_modules/
