@@ -152,3 +152,5 @@ CORS_ALLOW_METHODS = [
     "DELETE",
     "OPTIONS",
 ]
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
