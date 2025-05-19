@@ -5,7 +5,7 @@ from django.conf import settings
 
 def enviar_email_automatico(email):
     subject = "Bem-vindo!"
-    message = "Obrigado por se cadastrar! Recebemos sua mensagem,em breve nossa eqipe entrar em contato com você."
+    message = "Obrigado por se cadastrar! Recebemos sua mensagem,em breve nossa equipe entrar em contato com você."
     from_email = settings.EMAIL_HOST_USER
 
     try:

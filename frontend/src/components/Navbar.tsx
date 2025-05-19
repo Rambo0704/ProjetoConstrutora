@@ -11,10 +11,10 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           <Link to="/" className="text-2xl font-bold text-gray-800 flex items-center">
-            <span className="text-yellow-500 mr-1">Construtora</span>EBO
+            <span className="text-yellow-500 mr-1">Construtora</span>
           </Link>
           
-          {/* Desktop Navigation */}
+          
           <div className="hidden md:flex items-center space-x-6">
             <Link to="/" className="text-gray-600 hover:text-yellow-500 transition-colors">
               Início

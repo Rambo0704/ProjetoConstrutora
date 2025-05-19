@@ -1,6 +1,11 @@
-from django.urls import path
-from .views import UsuarioListCreate
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import UsuarioViewSet, MensagemViewSet
+
+router = DefaultRouter()
+router.register(r'usuarios', UsuarioViewSet, basename='usuario')
+router.register(r'mensagens', MensagemViewSet, basename='mensagem')
 
 urlpatterns = [
-    path('usuarios/', UsuarioListCreate.as_view(), name='usuario-list-create'),
+    path('api/', include(router.urls)),
 ]

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,15 +9,16 @@ const ContactForm = () => {
     nome_usuario: "",
     email_usuario: "",
     telefone_usuario: "",
+    mensagem: "",
   });
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -27,13 +27,12 @@ const ContactForm = () => {
     setIsSubmitting(true);
 
     try {
-      
       const response = await fetch("http://127.0.0.1:8000/api/usuarios/", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
@@ -42,6 +41,7 @@ const ContactForm = () => {
           nome_usuario: "",
           email_usuario: "",
           telefone_usuario: "",
+          mensagem: "",
         });
       } else {
         toast.error("Erro ao enviar mensagem. Por favor, tente novamente.");
@@ -57,11 +57,11 @@ const ContactForm = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label htmlFor="nome" className="block text-sm font-medium mb-1">
+        <label htmlFor="nome_usuario" className="block text-sm font-medium mb-1">
           Nome completo *
         </label>
         <Input
-          id="nome_usuario_usuario"
+          id="nome_usuario"
           name="nome_usuario"
           value={formData.nome_usuario}
           onChange={handleChange}
@@ -71,13 +71,13 @@ const ContactForm = () => {
       </div>
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium mb-1">
+        <label htmlFor="email_usuario" className="block text-sm font-medium mb-1">
           Email *
         </label>
         <Input
           id="email_usuario"
           name="email_usuario"
-          type="email_usuario"
+          type="email"
           value={formData.email_usuario}
           onChange={handleChange}
           required
@@ -86,7 +86,7 @@ const ContactForm = () => {
       </div>
 
       <div>
-        <label htmlFor="telefone" className="block text-sm font-medium mb-1">
+        <label htmlFor="telefone_usuario" className="block text-sm font-medium mb-1">
           Telefone *
         </label>
         <Input
@@ -113,8 +113,8 @@ const ContactForm = () => {
         />
       </div>
 
-      <Button 
-        type="submit" 
+      <Button
+        type="submit"
         className="w-full bg-yellow-500 hover:bg-yellow-600 text-white"
         disabled={isSubmitting}
       >
