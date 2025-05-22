@@ -15,3 +15,10 @@ class Mensagem(models.Model):
 
     def __str__(self):
         return f"Mensagem de {self.usuario.nome_usuario}"
+class Produto(models.Model):
+    nome_produto = models.CharField(max_length=100)
+    descricao_produto = models.TextField()
+    preco_produto = models.DecimalField(max_digits=10,decimal_places=2)
+    quantidade_estoque = models.IntegerField()
+    imagem_produto = models.ImageField(upload_to='produtos/',null=True,blank=True)
+    
