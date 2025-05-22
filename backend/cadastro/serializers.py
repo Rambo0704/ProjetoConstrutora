@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Usuario, Mensagem
+from .models import Usuario, Mensagem,Produto
 
 class MensagemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,3 +22,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
             Mensagem.objects.create(usuario=usuario, conteudo=mensagem_conteudo)
         
         return usuario
+class ProdutoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Produto
+        fields = '__all__'
