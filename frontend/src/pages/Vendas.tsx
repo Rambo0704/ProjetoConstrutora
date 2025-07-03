@@ -1,53 +1,67 @@
 
+import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import api from "@/services/api";
+
+interface Produto {
+  id: number;
+  nome_produto: string;
+  descricao_produto: string; 
+  preco_produto: string; 
+  imagem_produto: string; 
+  quantidade_estoque: number
+}
 
 const Vendas = () => {
-  const produtos = [
-    {
-      id: 1,
-      nome: "Cimento Portland",
-      descricao: "Cimento de alta qualidade para diversos tipos de obra.",
-      preco: "R$ 29,90",
-      imagem: "placeholder"
-    },
-    {
-      id: 2,
-      nome: "Bloco Cerâmico",
-      descricao: "Blocos cerâmicos 9x19x29cm para paredes e estruturas.",
-      preco: "R$ 1,49",
-      imagem: "placeholder"
-    },
-    {
-      id: 3,
-      nome: "Areia Média",
-      descricao: "Areia de qualidade para concretos e argamassas.",
-      preco: "R$ 120,00/m³",
-      imagem: "placeholder"
-    },
-    {
-      id: 4,
-      nome: "Vergalhão CA-50",
-      descricao: "Barras de aço para concreto armado em diversas bitolas.",
-      preco: "R$ 72,90",
-      imagem: "placeholder"
-    },
-    {
-      id: 5,
-      nome: "Argamassa Colante",
-      descricao: "Argamassa para assentamento de revestimentos cerâmicos.",
-      preco: "R$ 19,90",
-      imagem: "placeholder"
-    },
-    {
-      id: 6,
-      nome: "Tinta Acrílica",
-      descricao: "Tinta de alta cobertura para interiores e exteriores.",
-      preco: "R$ 189,90",
-      imagem: "placeholder"
-    }
-  ];
+
+  const [produtos, setProdutos] = useState<Produto[]>([]);
+
+  const [loading, setLoading] = useState(true);
+
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProdutos = async () => {
+      try {
+
+        const response = await api.get<Produto[]>('/produtos/');
+ 
+        setProdutos(response.data);
+      } catch (err) {
+
+        setError("Falha ao carregar os produtos. Tente novamente mais tarde.");
+        console.error("Erro ao buscar produtos:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProdutos();
+  }, []);
+
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-16 text-center">
+          <h2 className="text-2xl font-semibold">Carregando produtos...</h2>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-16 text-center text-red-600">
+          <h2 className="text-2xl font-semibold">Ocorreu um Erro</h2>
+          <p>{error}</p>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -65,17 +79,21 @@ const Vendas = () => {
       {/* Produtos */}
       <section className="py-16">
         <div className="container mx-auto px-4">
+          {/* --- 6. ATUALIZAÇÃO DO MAP --- */}
+          {/* Agora o .map() usa a variável de estado 'produtos' */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {produtos.map((produto) => (
               <div key={produto.id} className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="h-48 bg-gray-200 flex items-center justify-center">
+                  {/* Quando tiver o campo de imagem, você pode usar: <img src={produto.imagem_produto} /> */}
                   <span className="text-gray-400">Imagem do produto</span>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-2">{produto.nome}</h3>
-                  <p className="text-gray-600 mb-4">{produto.descricao}</p>
+                  {/* Usamos os campos do nosso estado 'produto' */}
+                  <h3 className="text-xl font-semibold mb-2">{produto.nome_produto}</h3>
+                  <p className="text-gray-600 mb-4">{produto.descricao_produto}</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-yellow-500 font-bold text-lg">{produto.preco}</span>
+                    <span className="text-yellow-500 font-bold text-lg">{produto.preco_produto}</span>
                     <Button className="bg-yellow-500 hover:bg-yellow-600 text-white">
                       Solicitar
                     </Button>

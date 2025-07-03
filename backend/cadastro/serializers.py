@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Usuario, Mensagem,Produto
+from .models import Usuario, Mensagem
+from produtos.models import Produto
 
 class MensagemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,3 +27,4 @@ class ProdutoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Produto
         fields = '__all__'
+        read_only_fields = ['dono_produto', 'data_criacao']
