@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import Usuario, Mensagem
-from produtos.models import Produto
 
 class MensagemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -8,7 +7,7 @@ class MensagemSerializer(serializers.ModelSerializer):
         fields = ['id', 'conteudo', 'data_envio', 'usuario']
 
 class UsuarioSerializer(serializers.ModelSerializer):
-    mensagem = serializers.CharField(write_only=True)  # Novo campo para capturar a mensagem
+    mensagem = serializers.CharField(write_only=True)
 
     class Meta:
         model = Usuario
@@ -16,15 +15,9 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         mensagem_conteudo = validated_data.pop('mensagem', None)
-        
         usuario = Usuario.objects.create(**validated_data)
 
         if mensagem_conteudo:
             Mensagem.objects.create(usuario=usuario, conteudo=mensagem_conteudo)
-        
+
         return usuario
-class ProdutoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Produto
-        fields = '__all__'
-        read_only_fields = ['dono_produto', 'data_criacao']

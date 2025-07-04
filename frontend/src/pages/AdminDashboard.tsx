@@ -1,34 +1,28 @@
-// em src/pages/AdminDashboard.tsx
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '@/services/api';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
-import ProductForm from '@/components/admin/ProductForm'; // <-- 1. IMPORTE O FORMULÁRIO
-
-// --- 2. IMPORTE OS COMPONENTES DO MODAL (DIALOG) ---
+import ProductForm from '@/components/admin/ProductForm';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
-// Interface do Produto (pode manter a mesma)
 interface Produto {
   id: number;
-  nome: string;
-  descricao: string;
-  preco: string;
+  nome_produto: string;
+  descricao_produto: string;
+  preco_produto: string;
+  quantidade_estoque: number;
+  imagem: string | null;
 }
 
 const AdminDashboard = () => {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const navigate = useNavigate();
-
-  // --- 3. ESTADOS PARA CONTROLAR O MODAL E A EDIÇÃO ---
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [productToEdit, setProductToEdit] = useState<Produto | null>(null);
 
@@ -50,7 +44,7 @@ const AdminDashboard = () => {
       try {
         await api.delete(`/produtos/${id}/`);
         alert("Produto excluído com sucesso!");
-        fetchProdutos(); // Re-busca os produtos para atualizar a lista
+        fetchProdutos();
       } catch (error) {
         console.error("Falha ao excluir produto", error);
         alert("Não foi possível excluir o produto.");
@@ -58,21 +52,19 @@ const AdminDashboard = () => {
     }
   };
 
-  // --- 4. FUNÇÕES PARA ABRIR O MODAL ---
   const handleAddNew = () => {
-    setProductToEdit(null); // Garante que o formulário estará vazio
+    setProductToEdit(null);
     setIsModalOpen(true);
   };
 
   const handleEdit = (produto: Produto) => {
-    setProductToEdit(produto); // Passa o produto para o formulário
+    setProductToEdit(produto);
     setIsModalOpen(true);
   };
 
-  // --- 5. FUNÇÃO DE CALLBACK PARA QUANDO O FORMULÁRIO TIVER SUCESSO ---
   const handleSuccess = () => {
-    setIsModalOpen(false); // Fecha o modal
-    fetchProdutos(); // Atualiza a lista de produtos
+    setIsModalOpen(false);
+    fetchProdutos();
   };
 
   const handleLogout = () => {
@@ -86,7 +78,6 @@ const AdminDashboard = () => {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Gerenciamento de Produtos</h1>
           <div>
-            {/* O botão agora abre o modal */}
             <Button onClick={handleAddNew} className="mr-4 bg-green-600 hover:bg-green-700">
               Adicionar Novo Produto
             </Button>
@@ -96,23 +87,47 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Tabela de produtos (a mesma de antes, mas com o botão de editar funcional) */}
         <div className="bg-white shadow-md rounded-lg overflow-hidden">
           <table className="min-w-full leading-normal">
             <thead>
-              {/* ... cabeçalho da tabela ... */}
+              <tr>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Imagem
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Produto
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Estoque
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Preço
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Ações
+                </th>
+              </tr>
             </thead>
             <tbody>
               {produtos.map(produto => (
                 <tr key={produto.id}>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{produto.nome}</p>
+                    {produto.imagem ? (
+                      <img src={produto.imagem} alt={produto.nome_produto} className="h-12 w-12 object-cover rounded-md" />
+                    ) : (
+                      <div className="h-12 w-12 bg-gray-200 rounded-md flex items-center justify-center text-xs text-gray-500">Sem Img</div>
+                    )}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{produto.preco}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{produto.nome_produto}</p>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {/* Botão de editar agora chama a função handleEdit */}
+                    <p className="text-gray-900 whitespace-no-wrap">{produto.quantidade_estoque}</p>
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{produto.preco_produto}</p>
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <Button onClick={() => handleEdit(produto)} variant="outline" className="mr-2">
                       Editar
                     </Button>
@@ -127,7 +142,6 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* --- 6. MODAL (DIALOG) PARA O FORMULÁRIO --- */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
@@ -136,9 +150,9 @@ const AdminDashboard = () => {
             </DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <ProductForm 
-              productToEdit={productToEdit} 
-              onSuccess={handleSuccess} 
+            <ProductForm
+              productToEdit={productToEdit}
+              onSuccess={handleSuccess}
             />
           </div>
         </DialogContent>
