@@ -11,11 +11,15 @@ import Informacoes from "./pages/Informacoes";
 import Contato from "./pages/Contato";
 import NotFound from "./pages/NotFound";
 
-
 import LoginPage from "./pages/LoginPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+// ✅ NOVO: import da tela HomeAdmin
+import HomeAdmin from "./pages/HomeAdmin";
+
+// (Opcional futuro): import da tela de Alocação
+// import AlocacaoDashboard from "./pages/AlocacaoDashboard";
 
 const queryClient = new QueryClient();
 
@@ -26,27 +30,25 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          {/* --- ROTAS PÚBLICAS (AS QUE VOCÊ JÁ TINHA) --- */}
+          {/* --- ROTAS PÚBLICAS --- */}
           <Route path="/" element={<Index />} />
           <Route path="/vendas" element={<Vendas />} />
           <Route path="/locacao" element={<Locacao />} />
           <Route path="/informacoes" element={<Informacoes />} />
           <Route path="/contato" element={<Contato />} />
-          
-          {/* --- 2. ADICIONE AS ROTAS DE LOGIN E ADMIN --- */}
 
-          {/* Rota pública para a página de login */}
+          {/* --- LOGIN --- */}
           <Route path="/login" element={<LoginPage />} />
 
-          {/* Grupo de Rotas Protegidas */}
-          {/* O 'ProtectedRoute' vai funcionar como um porteiro para as rotas aninhadas.
-              Ele só vai deixar passar para '/admin/dashboard' se o usuário estiver logado. */}
+          {/* --- ROTAS PROTEGIDAS --- */}
           <Route element={<ProtectedRoute />}>
+            <Route path="/admin/home" element={<HomeAdmin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            {/* Se tivesse mais páginas de admin, elas iriam aqui dentro também */}
+            {/* Futuro: rota de alocação */}
+            {/* <Route path="/admin/alocacoes" element={<AlocacaoDashboard />} /> */}
           </Route>
 
-          {/* Rota para páginas não encontradas (continua no final) */}
+          {/* --- NOT FOUND --- */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

@@ -28,7 +28,7 @@ const LoginPage = () => {
 
       localStorage.setItem('accessToken', response.data.access);
 
-      navigate('/admin/dashboard');
+      navigate('/admin/home');
 
     } catch (err) {
       console.error('Falha no login:', err);
