@@ -6,11 +6,11 @@ const HomeAdmin = () => {
   const navigate = useNavigate();
 
   const handleGoToProdutos = () => {
-    navigate("/admin/produtos");
+    navigate("/admin/dashboard"); // <-- Correto
   };
 
   const handleGoToAlocacoes = () => {
-    navigate("/admin/alocacoes");
+    navigate("/admin/alocacoes"); // <-- Correto
   };
 
   return (

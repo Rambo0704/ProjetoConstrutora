@@ -7,12 +7,12 @@ from produtos.views import ProdutoViewSet
 from cadastro.views import UsuarioViewSet, MensagemViewSet
 from django.conf import settings
 from django.conf.urls.static import static
-
+from alocacao.views import AlocacaoViewSet 
 router = DefaultRouter()
 router.register(r'produtos', ProdutoViewSet)
 router.register(r'usuarios', UsuarioViewSet)
 router.register(r'mensagens', MensagemViewSet)
-
+router.register(r'alocacoes', AlocacaoViewSet)  
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),

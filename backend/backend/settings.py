@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'cadastro',
     'produtos',
+    'alocacao',
     'rest_framework_simplejwt',
 ]
 

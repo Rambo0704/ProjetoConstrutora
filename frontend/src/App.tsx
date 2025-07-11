@@ -10,7 +10,7 @@ import Locacao from "./pages/Locacao";
 import Informacoes from "./pages/Informacoes";
 import Contato from "./pages/Contato";
 import NotFound from "./pages/NotFound";
-
+import AlocacoesAdmin from './pages/AlocacoesAdmin';
 import LoginPage from "./pages/LoginPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -39,7 +39,7 @@ const App = () => (
 
           {/* --- LOGIN --- */}
           <Route path="/login" element={<LoginPage />} />
-
+            <Route path="/admin/alocacoes" element={<AlocacoesAdmin />} />
           {/* --- ROTAS PROTEGIDAS --- */}
           <Route element={<ProtectedRoute />}>
             <Route path="/admin/home" element={<HomeAdmin />} />
