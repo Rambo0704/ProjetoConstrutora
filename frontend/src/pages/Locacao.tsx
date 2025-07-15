@@ -11,6 +11,7 @@ interface Alocacao {
   data_fim: string;
   local: string;
   observacoes: string;
+  imagem_alocacao: string; // Adicione esta propriedade
 }
 
 const Locacao = () => {
@@ -53,9 +54,17 @@ const Locacao = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {alocacoes.map((item) => (
                 <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-                  <div className="h-48 bg-gray-200 flex items-center justify-center">
-                    <span className="text-gray-400">Imagem ilustrativa</span>
-                  </div>
+                  {item.imagem_alocacao ? (
+                    <img 
+                      src={item.imagem_alocacao} 
+                      alt={`Alocação para ${item.nome_cliente}`} 
+                      className="w-full h-48 object-cover"
+                    />
+                  ) : (
+                    <div className="h-48 bg-gray-200 flex items-center justify-center">
+                      <span className="text-gray-400">Sem imagem</span>
+                    </div>
+                  )}
                   <div className="p-6">
                     <h3 className="text-xl font-semibold mb-2">
                       {item.nome_cliente}
@@ -84,7 +93,6 @@ const Locacao = () => {
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold mb-6">Informações sobre Locação</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Informações da sua versão anterior (mantidas) */}
           </div>
         </div>
       </section>

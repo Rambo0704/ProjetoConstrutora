@@ -8,6 +8,6 @@ class Alocacao(models.Model):
     local = models.CharField(max_length=200)
     observacoes = models.TextField(blank=True)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='alocacoes')
-
+    imagem_alocacao = models.ImageField(upload_to='alocacao_imagens/', blank=True, null=True)
     def __str__(self):
         return f"{self.nome_cliente} ({self.local})"

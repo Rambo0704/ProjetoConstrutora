@@ -12,6 +12,7 @@ interface Alocacao {
   data_fim: string;
   local: string;
   observacoes: string;
+  imagem_alocacao: string;
 }
 
 interface AlocacaoFormProps {
@@ -27,6 +28,9 @@ const AlocacaoForm = ({ alocacaoToEdit, onSuccess }: AlocacaoFormProps) => {
   const [observacoes, setObservacoes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Novo estado apenas para o arquivo de imagem
+  const [imagemAlocacaoFile, setImagemAlocacaoFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (alocacaoToEdit) {
@@ -42,6 +46,8 @@ const AlocacaoForm = ({ alocacaoToEdit, onSuccess }: AlocacaoFormProps) => {
       setLocal('');
       setObservacoes('');
     }
+    // Sempre resetar o arquivo de imagem quando mudar a alocação
+    setImagemAlocacaoFile(null);
   }, [alocacaoToEdit]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -49,19 +55,30 @@ const AlocacaoForm = ({ alocacaoToEdit, onSuccess }: AlocacaoFormProps) => {
     setIsSubmitting(true);
     setError(null);
 
-    const alocacaoData = {
-      nome_cliente: nomeCliente,
-      data_inicio: dataInicio,
-      data_fim: dataFim,
-      local,
-      observacoes,
-    };
+    // Usar FormData para suportar envio de arquivo
+    const formData = new FormData();
+    formData.append('nome_cliente', nomeCliente);
+    formData.append('data_inicio', dataInicio);
+    formData.append('data_fim', dataFim);
+    formData.append('local', local);
+    formData.append('observacoes', observacoes);
+    
+    // Adicionar imagem se existir
+    if (imagemAlocacaoFile) {
+      formData.append('imagem_alocacao', imagemAlocacaoFile);
+    }
 
     try {
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      };
+
       if (alocacaoToEdit && alocacaoToEdit.id) {
-        await api.put(`/alocacoes/${alocacaoToEdit.id}/`, alocacaoData);
+        await api.put(`/alocacoes/${alocacaoToEdit.id}/`, formData, config);
       } else {
-        await api.post('/alocacoes/', alocacaoData);
+        await api.post('/alocacoes/', formData, config);
       }
       onSuccess();
     } catch (err) {
@@ -122,6 +139,17 @@ const AlocacaoForm = ({ alocacaoToEdit, onSuccess }: AlocacaoFormProps) => {
           id="observacoes"
           value={observacoes}
           onChange={(e) => setObservacoes(e.target.value)}
+        />
+      </div>
+
+      {/* Novo campo simples para upload de imagem */}
+      <div className="space-y-2">
+        <Label htmlFor="imagem_alocacao">Imagem da Alocação</Label>
+        <Input
+          id="imagem_alocacao"
+          type="file"
+          accept="image/*"
+          onChange={(e) => setImagemAlocacaoFile(e.target.files?.[0] || null)}
         />
       </div>
 

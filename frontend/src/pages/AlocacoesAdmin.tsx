@@ -1,5 +1,6 @@
 // src/pages/AlocacoesAdmin.tsx
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Adicionado useNavigate
 import api from '@/services/api';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 interface Alocacao {
@@ -25,6 +25,7 @@ const AlocacoesAdmin = () => {
   const [alocacoes, setAlocacoes] = useState<Alocacao[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [alocacaoToEdit, setAlocacaoToEdit] = useState<Alocacao | null>(null);
+  const navigate = useNavigate(); // Adicionado para navegação
 
   const fetchAlocacoes = async () => {
     try {
@@ -38,6 +39,19 @@ const AlocacoesAdmin = () => {
   useEffect(() => {
     fetchAlocacoes();
   }, []);
+
+  const handleDelete = async (id: number) => {
+    if (window.confirm("Tem certeza que deseja excluir esta alocação?")) {
+      try {
+        await api.delete(`/alocacoes/${id}/`);
+        alert("Alocação excluída com sucesso!");
+        fetchAlocacoes();
+      } catch (err) {
+        console.error("Falha ao excluir alocação", err);
+        alert("Não foi possível excluir a alocação.");
+      }
+    }
+  };
 
   const handleAddNew = () => {
     setAlocacaoToEdit(null);
@@ -54,38 +68,80 @@ const AlocacoesAdmin = () => {
     fetchAlocacoes();
   };
 
+  // ADICIONADO: Função para logout
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    navigate('/login');
+  };
+
   return (
     <Layout>
       <div className="container mx-auto py-10">
-        <h1 className="text-3xl font-bold mb-6">Gerenciar Alocações</h1>
-        <Button onClick={handleAddNew} className="mb-4 bg-green-600 hover:bg-green-700">
-          Nova Alocação
-        </Button>
+        <div className="flex justify-between items-center mb-6"> {/* Container flex para alinhar */}
+          <h1 className="text-3xl font-bold">Gerenciar Alocações</h1>
+          <div>
+            <Button onClick={handleAddNew} className="mr-4 bg-green-600 hover:bg-green-700">
+              Nova Alocação
+            </Button>
+            {/* ADICIONADO: Botão Sair em vermelho */}
+            <Button onClick={handleLogout} variant="destructive">
+              Sair
+            </Button>
+          </div>
+        </div>
 
-        <table className="min-w-full border">
-          <thead>
-            <tr className="bg-gray-100">
-              <th>Cliente</th>
-              <th>Período</th>
-              <th>Local</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {alocacoes.map((aloc) => (
-              <tr key={aloc.id}>
-                <td>{aloc.nome_cliente}</td>
-                <td>{aloc.data_inicio} a {aloc.data_fim}</td>
-                <td>{aloc.local}</td>
-                <td>
-                  <Button onClick={() => handleEdit(aloc)} variant="outline" className="mr-2">
-                    Editar
-                  </Button>
-                </td>
+        <div className="bg-white shadow-md rounded-lg overflow-hidden">
+          <table className="min-w-full leading-normal">
+            <thead>
+              <tr>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Cliente
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Período
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Local
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Ações
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {alocacoes.map((aloc) => (
+                <tr key={aloc.id}>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{aloc.nome_cliente}</p>
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">
+                      {aloc.data_inicio} a {aloc.data_fim}
+                    </p>
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{aloc.local}</p>
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <Button 
+                      onClick={() => handleEdit(aloc)} 
+                      variant="outline" 
+                      className="mr-2"
+                    >
+                      Editar
+                    </Button>
+                    <Button 
+                      onClick={() => handleDelete(aloc.id)} 
+                      variant="destructive"
+                    >
+                      Excluir
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

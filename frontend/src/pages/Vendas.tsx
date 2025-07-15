@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Adicionado useNavigate
 import api from "@/services/api";
 
 interface Produto {
@@ -17,6 +17,7 @@ const Vendas = () => {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate(); // Hook para navegação
 
   useEffect(() => {
     const fetchProdutos = async () => {
@@ -32,6 +33,16 @@ const Vendas = () => {
     };
     fetchProdutos();
   }, []);
+
+  // Função para gerar a mensagem pré-preenchida
+  const gerarMensagemProduto = (produto: Produto) => {
+    return `Olá, gostaria de solicitar informações sobre o produto: 
+${produto.nome_produto}
+Preço: ${produto.preco_produto}
+Descrição: ${produto.descricao_produto}
+
+Por favor, entre em contato comigo para discutir detalhes sobre este produto.`;
+  };
 
   if (loading) {
     return (
@@ -87,9 +98,18 @@ const Vendas = () => {
                   <p className="text-gray-600 mb-4 flex-grow">{produto.descricao_produto}</p>
                   <div className="flex items-center justify-between mt-auto">
                     <span className="text-yellow-500 font-bold text-lg">{produto.preco_produto}</span>
-                    <Button className="bg-yellow-500 hover:bg-yellow-600 text-white">
-                      Solicitar
-                    </Button>
+                    {/* Botão modificado para Link com state */}
+                    <Link 
+                      to="/contato" 
+                      state={{ 
+                        message: gerarMensagemProduto(produto),
+                        produto: produto.nome_produto 
+                      }}
+                    >
+                      <Button className="bg-yellow-500 hover:bg-yellow-600 text-white">
+                        Solicitar
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>
