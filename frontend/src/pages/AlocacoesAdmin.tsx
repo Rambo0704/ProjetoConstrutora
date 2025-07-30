@@ -1,6 +1,6 @@
 // src/pages/AlocacoesAdmin.tsx
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Adicionado useNavigate
+import { useNavigate } from 'react-router-dom';
 import api from '@/services/api';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
@@ -19,13 +19,14 @@ interface Alocacao {
   data_fim: string;
   local: string;
   observacoes: string;
+  imagem_alocacao?: string; // Adicionado campo de imagem
 }
 
 const AlocacoesAdmin = () => {
   const [alocacoes, setAlocacoes] = useState<Alocacao[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [alocacaoToEdit, setAlocacaoToEdit] = useState<Alocacao | null>(null);
-  const navigate = useNavigate(); // Adicionado para navegação
+  const navigate = useNavigate();
 
   const fetchAlocacoes = async () => {
     try {
@@ -68,7 +69,6 @@ const AlocacoesAdmin = () => {
     fetchAlocacoes();
   };
 
-  // ADICIONADO: Função para logout
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
     navigate('/login');
@@ -77,13 +77,12 @@ const AlocacoesAdmin = () => {
   return (
     <Layout>
       <div className="container mx-auto py-10">
-        <div className="flex justify-between items-center mb-6"> {/* Container flex para alinhar */}
+        <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Gerenciar Alocações</h1>
           <div>
             <Button onClick={handleAddNew} className="mr-4 bg-green-600 hover:bg-green-700">
               Nova Alocação
             </Button>
-            {/* ADICIONADO: Botão Sair em vermelho */}
             <Button onClick={handleLogout} variant="destructive">
               Sair
             </Button>
@@ -95,7 +94,7 @@ const AlocacoesAdmin = () => {
             <thead>
               <tr>
                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Cliente
+                  Equipamento
                 </th>
                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Período
@@ -112,7 +111,16 @@ const AlocacoesAdmin = () => {
               {alocacoes.map((aloc) => (
                 <tr key={aloc.id}>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{aloc.nome_cliente}</p>
+                    <div className="flex items-center space-x-3">
+                      {aloc.imagem_alocacao && (
+                        <img
+                          src={aloc.imagem_alocacao}
+                          alt={`Imagem de ${aloc.nome_cliente}`}
+                          className="w-12 h-12 object-cover rounded"
+                        />
+                      )}
+                      <p className="text-gray-900 whitespace-no-wrap">{aloc.nome_cliente}</p>
+                    </div>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">

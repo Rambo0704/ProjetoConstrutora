@@ -100,7 +100,7 @@ Por favor, entre em contato comigo para discutir detalhes sobre este produto.`;
                     <span className="text-yellow-500 font-bold text-lg">{produto.preco_produto}</span>
                     {/* Botão modificado para Link com state */}
                     <Link 
-                      to="/contato" 
+                       /* to="/contato"*/ 
                       state={{ 
                         message: gerarMensagemProduto(produto),
                         produto: produto.nome_produto 
