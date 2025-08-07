@@ -1,15 +1,139 @@
-
+import { useEffect, useRef, useState } from 'react';
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const Index = () => {
+  const videoRef = useRef(null);
+  const [showPlayButton, setShowPlayButton] = useState(false);
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+
+  useEffect(() => {
+    // Detectar se é um dispositivo iOS
+    const isAppleDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    setIsIOS(isAppleDevice);
+
+    const video = videoRef.current;
+    
+    // Configurações específicas para iOS
+    if (isAppleDevice && video) {
+      video.setAttribute('playsinline', 'true');
+      video.setAttribute('webkit-playsinline', 'true');
+      video.muted = true;
+    }
+
+    const tryPlayVideo = async () => {
+      if (video && video.readyState >= 3) { // 3 = HAVE_FUTURE_DATA
+        try {
+          // Tenta reproduzir o vídeo
+          await video.play();
+          setShowPlayButton(false);
+        } catch (error) {
+          console.log("Autoplay bloqueado:", error);
+          setShowPlayButton(true);
+        }
+      }
+    };
+
+    const handleVideoLoaded = () => {
+      setIsVideoLoaded(true);
+      tryPlayVideo();
+    };
+
+    // Evento para quando o vídeo tiver carregado dados suficientes
+    if (video) {
+      video.addEventListener('loadeddata', handleVideoLoaded);
+      video.addEventListener('canplay', handleVideoLoaded);
+      
+      // Configurar pré-carregamento
+      video.preload = "auto";
+      
+      // Forçar carregamento em dispositivos móveis
+      if (isAppleDevice) {
+        video.load();
+      }
+    }
+
+    // Tenta reproduzir quando o usuário interagir com a página
+    const handleUserInteraction = () => {
+      if (video && video.paused) {
+        tryPlayVideo();
+      }
+    };
+
+    window.addEventListener('click', handleUserInteraction);
+    window.addEventListener('touchstart', handleUserInteraction);
+    window.addEventListener('scroll', handleUserInteraction);
+
+    return () => {
+      window.removeEventListener('click', handleUserInteraction);
+      window.removeEventListener('touchstart', handleUserInteraction);
+      window.removeEventListener('scroll', handleUserInteraction);
+      if (video) {
+        video.removeEventListener('loadeddata', handleVideoLoaded);
+        video.removeEventListener('canplay', handleVideoLoaded);
+      }
+    };
+  }, []);
+
+  const handlePlayClick = () => {
+    const video = videoRef.current;
+    if (video) {
+      video.play()
+        .then(() => setShowPlayButton(false))
+        .catch(error => console.log("Falha ao reproduzir:", error));
+    }
+  };
+
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="relative bg-gray-900 text-white">
-        <div className="absolute inset-0 bg-gradient-to-r from-black to-transparent opacity-70"></div>
-        <div className="container mx-auto px-4 py-20 md:py-32 relative z-10">
+      {/* Hero Section com Vídeo de Fundo */}
+      <section className="relative bg-gray-900 text-white overflow-hidden min-h-[80vh] flex items-center">
+        {/* Vídeo de fundo */}
+        <div className="absolute inset-0 z-0">
+          <video 
+            ref={videoRef}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover"
+            poster="/images/logo.jpg"
+          >
+            <source 
+              src="/videos/Vintage Culture, Rooftime - I Will Find (Official Music Video).mp4" 
+              type="video/mp4" 
+            /> 
+            Seu navegador não suporta vídeos HTML5.
+          </video>
+          
+          {/* Spinner de carregamento */}
+          {!isVideoLoaded && (
+            <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500"></div>
+            </div>
+          )}
+        </div>
+        
+        {/* Overlay escuro para contraste */}
+        <div className="absolute inset-0 bg-black opacity-70 z-10"></div>
+        
+        {/* Botão de fallback para reprodução manual */}
+        {showPlayButton && (
+          <button
+            onClick={handlePlayClick}
+            className="absolute bottom-4 right-4 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-full z-30 flex items-center shadow-lg"
+            aria-label="Reproduzir vídeo"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+            </svg>
+          </button>
+        )}
+        
+        {/* Conteúdo do Hero */}
+        <div className="container mx-auto px-4 py-20 md:py-32 relative z-20">
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
               Construindo o futuro com qualidade e confiança
@@ -25,7 +149,7 @@ const Index = () => {
                 </Button>
               </Link>
               <Link to="/contato">
-                <Button variant="outline" className="border-white text-black hover:bg-white hover:text-gray-900 px-6 py-6 text-lg">
+                <Button variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900 px-6 py-6 text-lg">
                   Entre em Contato
                 </Button>
               </Link>
