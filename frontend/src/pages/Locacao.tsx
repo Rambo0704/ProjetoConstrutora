@@ -37,9 +37,9 @@ const Locacao = () => {
     <Layout>
       <section className="bg-gray-100 py-12">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">Locações Realizadas</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">Locações</h1>
           <p className="text-lg text-gray-600 max-w-3xl">
-            Veja os registros de alocações de nossos equipamentos feitas por clientes.
+            Veja as alocações disponiveis.
           </p>
         </div>
       </section>
